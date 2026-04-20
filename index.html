@@ -2,94 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fred Talk & Story Helper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>RWI Pro Helper</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Fredoka', sans-serif; }
+        body { font-family: 'Fredoka', sans-serif; -webkit-tap-highlight-color: transparent; }
         .dot { height: 8px; width: 8px; background-color: #4ade80; border-radius: 50%; display: inline-block; margin-top: 4px; }
-        .dash { height: 4px; width: 20px; background-color: #f472b6; border-radius: 10px; display: inline-block; margin-top: 4px; }
+        .dash { height: 4px; width: 22px; background-color: #f472b6; border-radius: 10px; display: inline-block; margin-top: 4px; }
+        .active-tab { background-color: white; color: #4f46e5; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="bg-green-50 min-h-screen p-4 pb-20">
+<body class="bg-slate-50 min-h-screen p-4 pb-20">
 
-    <header class="max-w-md mx-auto text-center my-6">
-        <div class="text-4xl mb-1">🐸</div>
-        <h1 class="text-2xl font-bold text-green-700">RWI Parent Decoder</h1>
+    <header class="max-w-md mx-auto text-center my-4">
+        <div class="text-3xl mb-1">🐸</div>
+        <h1 class="text-2xl font-bold text-indigo-600">RWI Pro Helper</h1>
     </header>
 
-    <div class="max-w-md mx-auto space-y-6">
+    <div class="max-w-md mx-auto space-y-4">
         
-        <section class="bg-white p-5 rounded-3xl shadow-md border-2 border-green-200">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Fred Talker</h2>
+        <section class="bg-white p-5 rounded-3xl shadow-sm border-2 border-indigo-50">
             <input type="text" id="wordInput" onkeyup="updateApp()" placeholder="Type a word..." 
-                class="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-green-400 outline-none mb-4 text-lg">
-            <div id="fredOutput" class="flex justify-center items-center gap-4 text-3xl font-bold text-slate-800 min-h-[60px] text-center">
+                class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-400 outline-none mb-4 text-xl">
+            
+            <div id="fredOutput" class="flex justify-center items-center gap-4 text-3xl font-bold text-slate-800 min-h-[50px] flex-wrap">
                 </div>
         </section>
 
-        <section id="storyBlock" class="bg-indigo-600 p-5 rounded-3xl shadow-lg text-white hidden">
-            <h2 class="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-4">Letter Writing Stories</h2>
-            <div id="storyList" class="space-y-3">
-                </div>
-        </section>
+        <div class="bg-slate-200 p-1 rounded-2xl flex text-sm font-bold text-slate-500">
+            <button onclick="setMode('writing')" id="tab-writing" class="flex-1 py-3 rounded-xl transition-all active-tab">✍️ WRITING</button>
+            <button onclick="setMode('sounds')" id="tab-sounds" class="flex-1 py-3 rounded-xl transition-all">📢 SOUNDS</button>
+        </div>
 
-        <section class="space-y-3">
-            <h3 class="font-bold text-slate-400 uppercase text-xs tracking-widest px-2">Quick Reference</h3>
-            <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center">
-                <span class="font-bold text-pink-500 text-xl">sh / ch / th</span>
-                <span class="text-slate-400 text-sm italic">"Special Friends"</span>
-            </div>
-            <div class="bg-pink-100 p-4 rounded-2xl shadow-sm flex justify-between items-center border-2 border-pink-200">
-                <span class="font-bold text-pink-600 text-xl">a-e / i-e</span>
-                <span class="text-pink-700 text-sm">"Chatty Friends"</span>
-            </div>
+        <section id="storyBlock" class="bg-indigo-600 p-6 rounded-3xl shadow-lg text-white hidden">
+            <div id="storyList" class="space-y-4"></div>
         </section>
 
     </div>
 
     <script>
-        const stories = {
-            'a': 'Around the apple, down the leaf',
-            'b': 'Down the laces to the heel, around the toe',
-            'c': 'Curl around the caterpillar',
-            'd': 'Around his bottom, up his tall neck and down to his feet',
-            'e': 'Lift off the top and scoop out the egg',
-            'f': 'Down the stem and draw the leaves',
-            'g': 'Around her face, down her hair and give her a curl',
-            'h': 'Down the head to the hooves and over his back',
-            'i': 'Down his body, and a dot for his head',
-            'j': 'Down his body, curl and a dot',
-            'k': 'Down the kangaroo\'s body, tail and leg',
-            'l': 'Down the long leg',
-            'm': 'Maisie, mountain, mountain',
-            'n': 'Down Nobby, over his net',
-            'o': 'All around the orange',
-            'p': 'Down the plait and over the pirate\'s face',
-            'q': 'Around her head, up past her earrings and down her hair',
-            'r': 'Down his back, then curl over his arm',
-            's': 'Slither down the snake',
-            't': 'Down the tower, across the tower',
-            'u': 'Down and under, up to the top and draw the puddle',
-            'v': 'Down a wing, up a wing',
-            'w': 'Down, up, down, up',
-            'x': 'Down the arm and leg and repeat the other side',
-            'y': 'Down a horn, up a horn and under his chin',
-            'z': 'Zig-zag-zig'
+        let currentMode = 'writing';
+
+        const writingStories = {
+            'a': 'Around the apple, down the leaf', 'b': 'Down the laces to the heel, around the toe',
+            'c': 'Curl around the caterpillar', 'd': 'Around his bottom, up his tall neck and down to his feet',
+            'e': 'Lift off the top and scoop out the egg', 'f': 'Down the stem and draw the leaves',
+            'g': 'Around her face, down her hair and give her a curl', 'h': 'Down the head to the hooves and over his back',
+            'i': 'Down his body, and a dot for his head', 'j': 'Down his body, curl and a dot',
+            'k': 'Down the kangaroo\'s body, tail and leg', 'l': 'Down the long leg',
+            'm': 'Maisie, mountain, mountain', 'n': 'Down Nobby, over his net',
+            'o': 'All around the orange', 'p': 'Down the plait and over the pirate\'s face',
+            'q': 'Around her head, up past her earrings and down her hair', 'r': 'Down his back, then curl over his arm',
+            's': 'Slither down the snake', 't': 'Down the tower, across the tower',
+            'u': 'Down and under, up to the top and draw the puddle', 'v': 'Down a wing, up a wing',
+            'w': 'Down, up, down, up', 'x': 'Down the arm and leg and repeat the other side',
+            'y': 'Down a horn, up a horn and under his chin', 'z': 'Zig-zag-zig'
         };
 
-        const specialFriends = ['sh', 'ch', 'th', 'qu', 'ng', 'nk', 'ay', 'ee', 'igh', 'ow', 'oo', 'ar', 'or', 'air', 'ir', 'ou', 'oy'];
+        const soundRhymes = {
+            'ay': 'May I play?', 'ee': 'What can you see?', 'igh': 'Fly high',
+            'ow': 'Blow the snow', 'oo': 'Poo at the zoo or Look at a book',
+            'ar': 'Start the car', 'or': 'Shut the door', 'air': 'That\'s not fair',
+            'ir': 'Whirl and twirl', 'ou': 'Shout it out', 'oy': 'Toy for a boy',
+            'sh': 'Says shhh to the horse', 'ch': 'The caterpillar sneezes',
+            'th': 'The princess in the tower', 'qu': 'The queen and her umbrella',
+            'ng': 'A thing on a string', 'nk': 'I think I stink'
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('tab-writing').classList.toggle('active-tab', mode === 'writing');
+            document.getElementById('tab-sounds').classList.toggle('active-tab', mode === 'sounds');
+            updateApp();
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
 
         function updateApp() {
-            const word = document.getElementById('wordInput').value.toLowerCase();
+            const rawInput = document.getElementById('wordInput').value;
+            const word = rawInput.toLowerCase();
             const fredOutput = document.getElementById('fredOutput');
             const storyBlock = document.getElementById('storyBlock');
             const storyList = document.getElementById('storyList');
             
-            if(!word) { 
-                fredOutput.innerHTML = ""; 
-                storyBlock.classList.add('hidden');
+            if(!word.trim()) { 
+                fredOutput.innerHTML = ""; storyBlock.classList.add('hidden');
                 return; 
             }
 
@@ -97,44 +101,58 @@
             let fredHtml = "";
             let storyHtml = "";
             let i = 0;
-            
-            // Track letters used to avoid duplicate stories for double letters like 'll'
-            let processedLetters = new Set();
+            let processed = new Set();
+
+            const friends = Object.keys(soundRhymes).sort((a,b) => b.length - a.length);
 
             while (i < word.length) {
+                // Skip spaces in the UI output
+                if (word[i] === " ") {
+                    fredHtml += `<div class="w-4"></div>`;
+                    i++; continue;
+                }
+
                 let foundFriend = false;
-                
-                // Check for friends first
-                for(let friend of specialFriends.sort((a,b) => b.length - a.length)) {
-                    if(word.substring(i, i + friend.length) === friend) {
-                        fredHtml += `<div class="flex flex-col items-center"><span>${friend}</span><div class="dash"></div></div>`;
+                for(let f of friends) {
+                    if(word.substring(i, i+f.length) === f) {
+                        fredHtml += `<div class="flex flex-col items-center"><span>${f}</span><div class="dash"></div></div>`;
                         
-                        // Add stories for each character in the friend if they exist
-                        for(let char of friend) {
-                            if(stories[char] && !processedLetters.has(char)) {
-                                storyHtml += `<div class="flex gap-3 border-b border-indigo-500/50 pb-2 italic"><b class="text-indigo-200 uppercase">${char}:</b> <span>${stories[char]}</span></div>`;
-                                processedLetters.add(char);
+                        if(currentMode === 'sounds' && !processed.has(f)) {
+                            storyHtml += createItem(f, soundRhymes[f]);
+                            processed.add(f);
+                        } else if(currentMode === 'writing') {
+                            for(let char of f) {
+                                if(writingStories[char] && !processed.has(char)) {
+                                    storyHtml += createItem(char, writingStories[char]);
+                                    processed.add(char);
+                                }
                             }
                         }
-                        i += friend.length;
-                        foundFriend = true;
-                        break;
+                        i += f.length; foundFriend = true; break;
                     }
                 }
-                
                 if(!foundFriend) {
                     let char = word[i];
-                    fredHtml += `<div class="flex flex-col items-center"><span>${char}</span><div class="dot"></div></div>`;
-                    if(stories[char] && !processedLetters.has(char)) {
-                        storyHtml += `<div class="flex gap-3 border-b border-indigo-500/50 pb-2 italic"><b class="text-indigo-200 uppercase">${char}:</b> <span>${stories[char]}</span></div>`;
-                        processedLetters.add(char);
+                    // Only show dots and stories for actual letters
+                    if (/[a-z]/.test(char)) {
+                        fredHtml += `<div class="flex flex-col items-center"><span>${char}</span><div class="dot"></div></div>`;
+                        if(writingStories[char] && !processed.has(char)) {
+                            storyHtml += createItem(char, writingStories[char]);
+                            processed.add(char);
+                        }
                     }
                     i++;
                 }
             }
-            
             fredOutput.innerHTML = fredHtml;
-            storyList.innerHTML = storyHtml || "<p class='text-sm opacity-70'>Type letters to see stories...</p>";
+            storyList.innerHTML = storyHtml;
+        }
+
+        function createItem(label, text) {
+            return `<div onclick="speak('${text}')" class="flex items-center justify-between border-b border-indigo-400/30 pb-3 active:opacity-50">
+                <div class="flex-1"><span class="text-xl font-bold text-indigo-200 uppercase mr-2">${label}:</span><span class="text-sm italic">${text}</span></div>
+                <span class="text-xl">🔊</span>
+            </div>`;
         }
     </script>
 </body>
