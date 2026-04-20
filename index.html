@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fred Talk & Story Helper</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Fredoka', sans-serif; }
+        .dot { height: 8px; width: 8px; background-color: #4ade80; border-radius: 50%; display: inline-block; margin-top: 4px; }
+        .dash { height: 4px; width: 20px; background-color: #f472b6; border-radius: 10px; display: inline-block; margin-top: 4px; }
+    </style>
+</head>
+<body class="bg-green-50 min-h-screen p-4 pb-20">
+
+    <header class="max-w-md mx-auto text-center my-6">
+        <div class="text-4xl mb-1">🐸</div>
+        <h1 class="text-2xl font-bold text-green-700">RWI Parent Decoder</h1>
+    </header>
+
+    <div class="max-w-md mx-auto space-y-6">
+        
+        <section class="bg-white p-5 rounded-3xl shadow-md border-2 border-green-200">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Fred Talker</h2>
+            <input type="text" id="wordInput" onkeyup="updateApp()" placeholder="Type a word..." 
+                class="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-green-400 outline-none mb-4 text-lg">
+            <div id="fredOutput" class="flex justify-center items-center gap-4 text-3xl font-bold text-slate-800 min-h-[60px] text-center">
+                </div>
+        </section>
+
+        <section id="storyBlock" class="bg-indigo-600 p-5 rounded-3xl shadow-lg text-white hidden">
+            <h2 class="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-4">Letter Writing Stories</h2>
+            <div id="storyList" class="space-y-3">
+                </div>
+        </section>
+
+        <section class="space-y-3">
+            <h3 class="font-bold text-slate-400 uppercase text-xs tracking-widest px-2">Quick Reference</h3>
+            <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center">
+                <span class="font-bold text-pink-500 text-xl">sh / ch / th</span>
+                <span class="text-slate-400 text-sm italic">"Special Friends"</span>
+            </div>
+            <div class="bg-pink-100 p-4 rounded-2xl shadow-sm flex justify-between items-center border-2 border-pink-200">
+                <span class="font-bold text-pink-600 text-xl">a-e / i-e</span>
+                <span class="text-pink-700 text-sm">"Chatty Friends"</span>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const stories = {
+            'a': 'Around the apple, down the leaf',
+            'b': 'Down the laces to the heel, around the toe',
+            'c': 'Curl around the caterpillar',
+            'd': 'Around his bottom, up his tall neck and down to his feet',
+            'e': 'Lift off the top and scoop out the egg',
+            'f': 'Down the stem and draw the leaves',
+            'g': 'Around her face, down her hair and give her a curl',
+            'h': 'Down the head to the hooves and over his back',
+            'i': 'Down his body, and a dot for his head',
+            'j': 'Down his body, curl and a dot',
+            'k': 'Down the kangaroo\'s body, tail and leg',
+            'l': 'Down the long leg',
+            'm': 'Maisie, mountain, mountain',
+            'n': 'Down Nobby, over his net',
+            'o': 'All around the orange',
+            'p': 'Down the plait and over the pirate\'s face',
+            'q': 'Around her head, up past her earrings and down her hair',
+            'r': 'Down his back, then curl over his arm',
+            's': 'Slither down the snake',
+            't': 'Down the tower, across the tower',
+            'u': 'Down and under, up to the top and draw the puddle',
+            'v': 'Down a wing, up a wing',
+            'w': 'Down, up, down, up',
+            'x': 'Down the arm and leg and repeat the other side',
+            'y': 'Down a horn, up a horn and under his chin',
+            'z': 'Zig-zag-zig'
+        };
+
+        const specialFriends = ['sh', 'ch', 'th', 'qu', 'ng', 'nk', 'ay', 'ee', 'igh', 'ow', 'oo', 'ar', 'or', 'air', 'ir', 'ou', 'oy'];
+
+        function updateApp() {
+            const word = document.getElementById('wordInput').value.toLowerCase();
+            const fredOutput = document.getElementById('fredOutput');
+            const storyBlock = document.getElementById('storyBlock');
+            const storyList = document.getElementById('storyList');
+            
+            if(!word) { 
+                fredOutput.innerHTML = ""; 
+                storyBlock.classList.add('hidden');
+                return; 
+            }
+
+            storyBlock.classList.remove('hidden');
+            let fredHtml = "";
+            let storyHtml = "";
+            let i = 0;
+            
+            // Track letters used to avoid duplicate stories for double letters like 'll'
+            let processedLetters = new Set();
+
+            while (i < word.length) {
+                let foundFriend = false;
+                
+                // Check for friends first
+                for(let friend of specialFriends.sort((a,b) => b.length - a.length)) {
+                    if(word.substring(i, i + friend.length) === friend) {
+                        fredHtml += `<div class="flex flex-col items-center"><span>${friend}</span><div class="dash"></div></div>`;
+                        
+                        // Add stories for each character in the friend if they exist
+                        for(let char of friend) {
+                            if(stories[char] && !processedLetters.has(char)) {
+                                storyHtml += `<div class="flex gap-3 border-b border-indigo-500/50 pb-2 italic"><b class="text-indigo-200 uppercase">${char}:</b> <span>${stories[char]}</span></div>`;
+                                processedLetters.add(char);
+                            }
+                        }
+                        i += friend.length;
+                        foundFriend = true;
+                        break;
+                    }
+                }
+                
+                if(!foundFriend) {
+                    let char = word[i];
+                    fredHtml += `<div class="flex flex-col items-center"><span>${char}</span><div class="dot"></div></div>`;
+                    if(stories[char] && !processedLetters.has(char)) {
+                        storyHtml += `<div class="flex gap-3 border-b border-indigo-500/50 pb-2 italic"><b class="text-indigo-200 uppercase">${char}:</b> <span>${stories[char]}</span></div>`;
+                        processedLetters.add(char);
+                    }
+                    i++;
+                }
+            }
+            
+            fredOutput.innerHTML = fredHtml;
+            storyList.innerHTML = storyHtml || "<p class='text-sm opacity-70'>Type letters to see stories...</p>";
+        }
+    </script>
+</body>
+</html>
